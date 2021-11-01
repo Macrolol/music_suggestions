@@ -9,14 +9,14 @@ DROP TABLE IF EXISTS song;
 DROP TABLE IF EXISTS album;
 DROP TABLE IF EXISTS artist;
 DROP TABLE IF EXISTS suggestion;
-DROP TABLE IF EXISTS refferer;
+DROP TABLE IF EXISTS suggester;
 
 
---the following query creates the refferer table
-CREATE TABLE refferer (
-  refferer_id SERIAL PRIMARY KEY,
-  refferer_contact VARCHAR(255) NOT NULL,
-  refferer_name VARCHAR(30) NOT NULL
+--the following query creates the suggester table
+CREATE TABLE suggester (
+  suggester_id SERIAL PRIMARY KEY,
+  suggester_contact VARCHAR(255) NOT NULL,
+  suggester_name VARCHAR(30) NOT NULL
 );
 
 --the following query creates the suggestion table
@@ -25,8 +25,10 @@ CREATE TABLE suggestion (
   suggestion_rating INTEGER,
   suggestion_listened BOOLEAN NOT NULL DEFAULT FALSE,
   suggestion_type CHAR(2) NOT NULL, -- 'AL' for album, 'AR' for artist, or 'SO' for song
-  suggestion_ref_id INTEGER NOT NULL,
-  FOREIGN KEY (suggestion_ref_id) REFERENCES refferer(refferer_id)
+  suggestion_suggester_id INTEGER NOT NULL,
+  suggestion_suggestee_id INTEGER NOT NULL,
+  FOREIGN KEY (suggestion_suggester_id) REFERENCES suggester(suggester_id)
+  FOREIGN KEY (suggestion_suggestee_id) REFERENCES suggester(suggester_id)
 );
 
 --the following query creates the artist table
