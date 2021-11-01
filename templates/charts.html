@@ -1,0 +1,29 @@
+<div class="container">
+    <p>My string: {{my_string}}</p>
+      <p>Value from the list: {{my_list[3]}}</p>
+      <p>Loop through the list:</p>
+      <ul>
+        {% for n in my_list %}
+        <li>{{n}}</li>
+        {% endfor %}
+      </ul>
+    <div class="song_table">
+        <table class="table">
+            <thead>
+                <tr>
+                    {% for h in ("Song Title", "Artist", "Listened", "Rating") %}
+                        <th scope="col">{{h}}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for song in songs_list %}
+                    <td>{{song.title}}</td>
+                    <td>{{song.artist}}</td>
+                    <td>{{song.listend}}</td>
+                    <td>{{song.rating}}</td>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
