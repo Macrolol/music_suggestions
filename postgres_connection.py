@@ -1,5 +1,6 @@
 import psycopg2
 import os
+import asyncio
 
 #build the connection string
 connection_string = "dbname='{}' user='{}' host='{}' password='{}'".format(
@@ -12,7 +13,9 @@ connection_string = "dbname='{}' user='{}' host='{}' password='{}'".format(
 
 def connect():
     #connect to the pg instance
+    print("connecting")
     conn = psycopg2.connect(connection_string)
+    print("connected")
     return conn
 
 

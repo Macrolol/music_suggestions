@@ -27,7 +27,7 @@ CREATE TABLE suggestion (
   suggestion_type CHAR(2) NOT NULL, -- 'AL' for album, 'AR' for artist, or 'SO' for song
   suggestion_suggester_id INTEGER NOT NULL,
   suggestion_suggestee_id INTEGER NOT NULL,
-  FOREIGN KEY (suggestion_suggester_id) REFERENCES suggester(suggester_id)
+  FOREIGN KEY (suggestion_suggester_id) REFERENCES suggester(suggester_id),
   FOREIGN KEY (suggestion_suggestee_id) REFERENCES suggester(suggester_id)
 );
 

@@ -9,7 +9,7 @@ from postgres_connection import (get_songs_suggested_to,
 
 @dataclass
 class Suggester(object):
-    """This isa a classs that holds information about
+    """This is a a classs that holds information about
     a suggester, including name, email address, and user prefferences"""
     id : int
     name: str
@@ -17,10 +17,27 @@ class Suggester(object):
     preferences: dict
     suggested_to_items : dict
     suggested_by_items : dict
+
+    #funcitons for getting items suggested to the suggester
+    suggested_to_functions ={
+    "albums": get_albums_suggested_to,
+    "artists": get_artists_suggested_to,
+    "songs": get_songs_suggested_to
+    }
+
+    #functions for getting items suggested by the suggester
+    suggested_by_functions = {
+    "albums": get_albums_suggested_by,
+    "artists": get_artists_suggested_by,
+    "songs": get_songs_suggested_by
+    }
+
     def __init__(self, name, email, preferences=None):
         self.name = name
         self.email = email
         self.preferences = {} if preferences is None else preferences
+
+
 
     def add_preference(self, key, value):
         self.preferences[key] = value
@@ -47,15 +64,10 @@ class Suggester(object):
         if self.suggested_to_items[key] is not None:
             return self.suggested_to_items[key]
 
-        if key == "albums":
-            self.suggested_to_items[key] = get_albums_suggested_to(self.id)
+        if key in Suggester.suggested_to_functions.keys():
+            self.suggested_to_items[key] = Suggester.suggested_to_functions[key](self.id)
             return self.suggested_to_items[key]
-        elif key == "artists":
-            self.suggested_to_items[key] = get_artists_suggested_to(self.id)
-            return self.suggested_to_items[key]
-        elif key == "songs":
-            self.suggested_to_items[key] = get_songs_suggested_to(self.id)
-            return self.suggested_to_items[key]
+        
         else:
             raise ValueError(f"Invalid key: {key}")
 
@@ -66,17 +78,11 @@ class Suggester(object):
         if self.suggested_by_items[key] is not None:
             return self.suggested_by_items[key]
 
-        if key == "albums":
-            self.suggested_by_items[key] = get_albums_suggested_by(self.id)
+        if key in Suggester.suggested_by_functions.keys():
+            self.suggested_by_items[key] = Suggester.suggested_by_functions[key](self.id)
             return self.suggested_by_items[key]
-        elif key == "artists":
-            self.suggested_by_items[key] = get_artists_suggested_by(self.id)
-            return self.suggested_by_items[key]
-        elif key == "songs":
-            self.suggested_by_items[key] = get_songs_suggested_by(self.id)
-            return self.suggested_by_items[key]
-        else:
-            raise ValueError(f"Invalid key: {key}")
+
+        raise ValueError(f"Invalid key: {key}") #if key didnt match 
 
     
     def __str__(self):
