@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS song;
 DROP TABLE IF EXISTS album;
 DROP TABLE IF EXISTS artist;
 DROP TABLE IF EXISTS suggestion;
+DROP TABLE IF EXISTS prefferences;
 DROP TABLE IF EXISTS suggester;
 
 
@@ -18,6 +19,14 @@ CREATE TABLE suggester (
   suggester_contact VARCHAR(255) NOT NULL,
   suggester_name VARCHAR(30) NOT NULL
 );
+
+CREATE TABLE prefferences (
+  prefference_suggester_id INT PRIMARY KEY,
+  prefference_wants_feedback BOOLEAN NOT NULL,
+  prefference_wants_suggestions BOOLEAN NOT NULL,
+  FOREIGN KEY (prefference_suggester_id) REFERENCES suggester(suggester_id)
+);
+
 
 --the following query creates the suggestion table
 CREATE TABLE suggestion (
