@@ -34,3 +34,6 @@ INNER JOIN prefferences pref
 ON pref.prefference_suggester_id = sug.suggester_id
 WHERE pref.prefference_wants_suggestions = 't'
 LIMIT 10;
+
+
+

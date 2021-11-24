@@ -1,4 +1,6 @@
+from abc import abstractmethod, ABC
 from dataclasses import dataclass
+from classes.data_access.suggester_da import SuggesterDA
 
 from data_access.suggestion_da import (get_songs_suggested_to,
                   get_songs_suggested_by,
@@ -8,7 +10,7 @@ from data_access.suggestion_da import (get_songs_suggested_to,
                   get_artists_suggested_to)
 
 
-class Suggestion(object):
+class Suggestion(ABC):
     def __init__(self, suggester = "anonymous"):
         self.suggesters = [ suggester ] #start a list of people that have suggested this
         self.rating = None
@@ -26,7 +28,16 @@ class Suggestion(object):
     @staticmethod
     def from_id(id):
         pass
+    
+    @abstractmethod
+    @staticmethod
+    def suggested_to(self, suggestee_id, limit=10):
+        pass
 
+    @abstractmethod
+    @staticmethod
+    def suggested_by(self, suggestee_id, limit=10):
+        pass
 
 
 @dataclass
@@ -47,7 +58,14 @@ class Song(Suggestion):
         self.title = title
         self.artist = artist
         self.album = album
+
+    @staticmethod
+    def suggested_to(suggestee_id, limit=10):
+        return get_songs_suggested_to(suggestee_id, limit)
         
+    @staticmethod
+    def suggested_by(suggestee_id, limit=10):
+        return get_songs_suggested_by(suggestee_id, limit)
 
 @dataclass
 class Album(Suggestion):
@@ -59,6 +77,14 @@ class Album(Suggestion):
     
     def __repr__(self):
         return f'{self.title} by {self.artist}'
+
+    @staticmethod
+    def suggested_to(suggestee_id, limit=10):
+        return get_albums_suggested_to(suggestee_id, limit)
+
+    @staticmethod
+    def suggested_by(suggestee_id, limit=10):
+        return get_albums_suggested_by(suggestee_id, limit)
     
     
     
@@ -71,12 +97,16 @@ class Artist(Suggestion):
     
     def __repr__(self):
         return f'{self.name}'
+
+    @staticmethod
+    def suggested_to(suggestee_id, limit=10):
+        return get_artists_suggested_to(suggestee_id, limit)
+    
+    @staticmethod
+    def suggested_by(suggestee_id, limit=10):
+        return get_artists_suggested_by(suggestee_id, limit)
     
 
 
 if __name__ == "__main__":
-    # test code
-    # create a song
-    song = Song(refferer="me")
-    print(vars(song))
-    
+    pass

@@ -16,8 +16,10 @@ DROP TABLE IF EXISTS suggester;
 --the following query creates the suggester table
 CREATE TABLE suggester (
   suggester_id SERIAL PRIMARY KEY,
-  suggester_contact VARCHAR(255) NOT NULL,
-  suggester_name VARCHAR(30) NOT NULL
+  suggester_email VARCHAR(255) UNIQUE NOT NULL,
+  suggester_name VARCHAR(30) NOT NULL,
+  suggester_password BYTEA NOT NULL,
+  suggester_wants_suggestions BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE prefferences (
@@ -86,5 +88,6 @@ CREATE TABLE song_suggestion (
   FOREIGN KEY (song_id) REFERENCES song(song_id)
 );
 
-
+GRANT ALL ON ALL TABLES IN SCHEMA public TO music_db_user;
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO music_db_user;
 

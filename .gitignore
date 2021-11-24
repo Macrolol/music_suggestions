@@ -1,3 +1,4 @@
 /firestore_connection.py
 /keys/
 /env
+**/__pycache__/
