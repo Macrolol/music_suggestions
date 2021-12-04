@@ -12,7 +12,7 @@ class DatabaseConnectionError(Exception):
 
 class UnexpectedDatabaseError(Exception):
     """
-    An error raised when the database returns an unexpected result.
+    An error raised when the database returns an unexpected result or error.
     """
     pass
 

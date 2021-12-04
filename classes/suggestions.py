@@ -11,10 +11,11 @@ from data_access.suggestion_da import (get_songs_suggested_to,
 
 
 class Suggestion(ABC):
-    def __init__(self, suggester = "anonymous"):
-        self.suggesters = [ suggester ] #start a list of people that have suggested this
-        self.rating = None
+
+    def __init__(self, suggester_id):
+        self.suggester_id = suggester_id
         self.listened = False
+        self.rating = None
 
     def add_refferer(self, refferer):
         self.suggesters.append(refferer)
@@ -25,8 +26,15 @@ class Suggestion(ABC):
     def rate(self, rating):
         self.rating = rating
 
+
+
     @staticmethod
     def from_id(id):
+        pass
+
+    @abstractmethod
+    @staticmethod
+    def suggest(suggestee):
         pass
     
     @abstractmethod
@@ -51,8 +59,8 @@ class Song(Suggestion):
     def __repr__(self):
         return f'{self.title} by {self.artist}'
 
-    def __init__(self, refferer="anonymous", title="", artist="", album=""):
-        super().__init__(suggester=refferer)
+    def __init__(self, suggester="anonymous", title="", artist="", album=""):
+        super().__init__(suggester=suggester)
         self.listened = False
         self.rating = None
         self.title = title
@@ -60,12 +68,16 @@ class Song(Suggestion):
         self.album = album
 
     @staticmethod
+    def suggest(suggestee, suggester="anonymous", title="", artist="", album=""):
+        pass #TODO: connect to data access layer
+
+    @staticmethod
     def suggested_to(suggestee_id, limit=10):
         return get_songs_suggested_to(suggestee_id, limit)
         
     @staticmethod
-    def suggested_by(suggestee_id, limit=10):
-        return get_songs_suggested_by(suggestee_id, limit)
+    def suggested_by(suggester_id, limit=10):
+        return get_songs_suggested_by(suggester_id, limit)
 
 @dataclass
 class Album(Suggestion):
