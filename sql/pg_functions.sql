@@ -299,3 +299,31 @@ BEGIN
     RETURN new_suggestion_id;
 END;
 $$ LANGUAGE plpgsql;
+
+
+DROP FUNCTION IF EXISTS try_login(arg_username text, arg_password text);
+CREATE OR REPLACE FUNCTION try_login(arg_username text, arg_password text)
+RETURNS record AS
+$$
+DECLARE
+    logging_in_suggester_with_password record;
+    logging_in_suggester record;
+BEGIN
+    SELECT *
+    INTO logging_in_suggester_with_password
+    FROM suggester
+    WHERE suggester_username = arg_username;
+
+    IF logging_in_suggester_id IS NULL THEN
+        RETURN NULL;
+    END IF;
+    IF crypto(arg_password, logging_in_suggester.suggester_password) THEN
+        SELECT suggester_id, suggester_email, suggester_username, suggester_created_date
+        FROM  logging_in_suggester
+        INTO logging_in_suggester;
+        RETURN logging_in_suggester;
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+

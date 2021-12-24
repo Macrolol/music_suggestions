@@ -71,9 +71,9 @@ class SuggesterDA:
         try:
             with connect() as conn:
                 cur = conn.cursor()
-                cur.execute("SELECT suggester_id as id, suggester_name as name, suggester_email as email, suggester_password as password, suggester_wants_suggestions as wants_suggestions FROM suggester WHERE suggester_name = %s", suggester_email)
+                cur.execute("SELECT try_login(%s, %s)", (suggester_email, suggester_password))
                 result = cur.fetchone()
-                print(result) #debug
+                print(result) #debug              
         except PostgresConnectionError as e:
             print("Error: {}".format(e)) #debug
             raise DatabaseConnectionError("Error connecting to database.", orig=e)

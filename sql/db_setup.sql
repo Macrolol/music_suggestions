@@ -1,6 +1,10 @@
 --the following query creates the music db
 --CREATE DATABASE music_suggestion;
 
+-- enable pgcrypto extension
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+
 --drop each table if they exist
 DROP VIEW IF EXISTS song_album_artist_id_names;
 DROP TABLE IF EXISTS artist_suggestion;
@@ -18,8 +22,8 @@ DROP TABLE IF EXISTS suggester;
 CREATE TABLE suggester (
   suggester_id SERIAL PRIMARY KEY,
   suggester_email VARCHAR(100) UNIQUE NOT NULL,
-  suggester_name VARCHAR(50) NOT NULL,
-  suggester_password BYTEA NOT NULL,
+  suggester_username VARCHAR(50) NOT NULL,
+  suggester_password TEXT NOT NULL, -- was considering using a fixed length CHAR(X) here as they're all going to be the same length but according to Postgres docs, it's doesn't matter
   suggester_created_date TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
