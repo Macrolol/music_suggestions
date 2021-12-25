@@ -2,3 +2,9 @@
 /keys/
 /env
 **/__pycache__/
+/UI/node_modules/
+/UI/package-lock.json
+/UI/.svelte-kit
+/UI/package.json
+/UI/build
+/UI/yarn.lock

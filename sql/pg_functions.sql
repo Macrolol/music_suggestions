@@ -301,8 +301,8 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-DROP FUNCTION IF EXISTS try_login(arg_username text, arg_password text);
-CREATE OR REPLACE FUNCTION try_login(arg_username text, arg_password text)
+DROP FUNCTION IF EXISTS try_login(arg_email text, arg_password text);
+CREATE OR REPLACE FUNCTION try_login(arg_email text, arg_password text)
 RETURNS record AS
 $$
 DECLARE
@@ -312,7 +312,7 @@ BEGIN
     SELECT *
     INTO logging_in_suggester_with_password
     FROM suggester
-    WHERE suggester_username = arg_username;
+    WHERE suggester_email = arg_email;
 
     IF logging_in_suggester_id IS NULL THEN
         RETURN NULL;
