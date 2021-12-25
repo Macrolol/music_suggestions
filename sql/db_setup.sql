@@ -7,6 +7,7 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 --drop each table if they exist
 DROP VIEW IF EXISTS song_album_artist_id_names;
+DROP VIEW IF EXISTS suggester_tags_view;
 DROP TABLE IF EXISTS artist_suggestion;
 DROP TABLE IF EXISTS album_suggestion;
 DROP TABLE IF EXISTS song_suggestion;
@@ -23,8 +24,10 @@ CREATE TABLE suggester (
   suggester_id SERIAL PRIMARY KEY,
   suggester_email VARCHAR(100) UNIQUE NOT NULL,
   suggester_username VARCHAR(50) NOT NULL,
+  suggester_tag_discriminator SMALLINT NOT NULL,
   suggester_password TEXT NOT NULL, -- was considering using a fixed length CHAR(X) here as they're all going to be the same length but according to Postgres docs, it's doesn't matter
-  suggester_created_date TIMESTAMP NOT NULL DEFAULT NOW()
+  suggester_created_date TIMESTAMP NOT NULL DEFAULT NOW(),
+  UNIQUE(suggester_username, suggester_tag_discriminator) 
 );
 
 -- the following query creates the prefferences table
@@ -109,6 +112,11 @@ LEFT JOIN album ON song.song_album_id = album.album_id
 LEFT JOIN artist artist_of_album ON artist_of_album.artist_id = album.album_artist_id
 LEFT JOIN artist artist_of_song ON artist_of_song.artist_id = song.song_artist_id;
 
+
+--the following query creates the suggester tag view
+CREATE OR REPLACE VIEW suggester_tags_view AS
+SELECT suggester_id, suggester_username || '#' || suggester_tag_discriminator AS suggester_tag 
+FROM suggester;
 
 
 GRANT ALL ON ALL TABLES IN SCHEMA public TO music_db_user;

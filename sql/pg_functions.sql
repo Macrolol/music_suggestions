@@ -317,7 +317,7 @@ BEGIN
     IF logging_in_suggester_id IS NULL THEN
         RETURN NULL;
     END IF;
-    IF crypto(arg_password, logging_in_suggester.suggester_password) THEN
+    IF crypt(arg_password, logging_in_suggester.suggester_password) THEN
         SELECT suggester_id, suggester_email, suggester_username, suggester_created_date
         FROM  logging_in_suggester
         INTO logging_in_suggester;
@@ -327,3 +327,52 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP FUNCTION IF EXISTS create_new_suggester(arg_username text, arg_email text, arg_password text);
+CREATE OR REPLACE FUNCTION create_new_suggester(arg_username text, arg_email text, arg_password text)
+RETURNS record AS
+$$
+DECLARE
+    existing_suggester_id integer;
+    new_suggester record;
+BEGIN
+    SELECT suggester_id FROM suggester
+    WHERE suggester_email = arg_email
+    INTO existing_suggester_id;
+
+    IF existing_suggester_id IS NULL THEN
+        INSERT INTO suggester (suggester_username, suggester_tag_discriminator, suggester_password, suggester_email)
+        VALUES (arg_username, generate_tag_discriminator(arg_username), crypt(arg_password, gen_salt('bf')), arg_email)
+        RETURNING suggester_id, suggester_username, suggester_email, suggester_created_date INTO new_suggester;
+        RETURN new_suggester;
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS generate_tag_discriminator(arg_username text);
+CREATE OR REPLACE FUNCTION generate_tag_discriminator(arg_username text)
+RETURNS smallint AS
+$$
+DECLARE
+    MAX_TAG_DISCRIMINATOR CONSTANT smallint := 9999;
+    MIN_TAG_DISCRIMINATOR CONSTANT smallint := 1000;
+    potential_discriminator smallint;
+    existing_discriminators smallint[] := ARRAY( SELECT suggester_tag_discriminator
+                                            FROM suggester
+                                            WHERE suggester_username = arg_username);
+BEGIN
+
+    LOOP
+
+    -- randomly generate a discriminator between MIN_TAG_DISCRIMINATOR(1000) and MAX_TAG_DISCRIMINATOR(9999)
+    SELECT FLOOR(RANDOM() * (MAX_TAG_DISCRIMINATOR - MIN_TAG_DISCRIMINATOR + 1) + MIN_TAG_DISCRIMINATOR)
+    INTO potential_discriminator;
+
+    -- check if the discriminator already in use by another suggester with the same username    
+    IF potential_discriminator = ANY(existing_discriminators) THEN
+        CONTINUE;
+    END IF;
+    RETURN potential_discriminator;
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;

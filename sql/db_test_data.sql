@@ -334,24 +334,21 @@ VALUES
 ('song without album46', 46),
 ('song without album47', 47);
 
--- Query to add 15 rows of sample data to the suggester table
--- adds a number as a name, number @email.com, and bcrypt password hash to the suggester table
-INSERT INTO suggester (suggester_name, suggester_email, suggester_password)
-VALUES ( '1', '1@email.com', '$2a$12$4jTBMwJ6eN0v3FHdmUlikO1W0azArtN7hiNC66XsjBvlbH20GYoa2'),
-       ( '2', '2@email.com', '$2a$12$4jTBMwJ6eN0v3FHdmUlikO1W0azArtN7hiNC66XsjBvlbH20GYoa2'),
-       ( '3', '3@email.com', '$2a$12$4jTBMwJ6eN0v3FHdmUlikO1W0azArtN7hiNC66XsjBvlbH20GYoa2'),
-       ( '4', '4@email.com', '$2a$12$4jTBMwJ6eN0v3FHdmUlikO1W0azArtN7hiNC66XsjBvlbH20GYoa2'),
-       ( '5', '5@email.com', '$2a$12$4jTBMwJ6eN0v3FHdmUlikO1W0azArtN7hiNC66XsjBvlbH20GYoa2'),
-       ( '6', '6@email.com', '$2a$12$4jTBMwJ6eN0v3FHdmUlikO1W0azArtN7hiNC66XsjBvlbH20GYoa2'),
-       ( '7', '7@email.com', '$2a$12$4jTBMwJ6eN0v3FHdmUlikO1W0azArtN7hiNC66XsjBvlbH20GYoa2'),
-       ( '8', '8@email.com', '$2a$12$4jTBMwJ6eN0v3FHdmUlikO1W0azArtN7hiNC66XsjBvlbH20GYoa2'),
-       ( '9', '9@email.com', '$2a$12$4jTBMwJ6eN0v3FHdmUlikO1W0azArtN7hiNC66XsjBvlbH20GYoa2'),
-       ( '10', '10@email.com', '$2a$12$4jTBMwJ6eN0v3FHdmUlikO1W0azArtN7hiNC66XsjBvlbH20GYoa2'),
-       ( '11', '11@email.com', '$2a$12$4jTBMwJ6eN0v3FHdmUlikO1W0azArtN7hiNC66XsjBvlbH20GYoa2'),
-       ( '12', '12@email.com', '$2a$12$4jTBMwJ6eN0v3FHdmUlikO1W0azArtN7hiNC66XsjBvlbH20GYoa2'),
-       ( '13', '13@email.com', '$2a$12$4jTBMwJ6eN0v3FHdmUlikO1W0azArtN7hiNC66XsjBvlbH20GYoa2'),
-       ( '14', '14@email.com', '$2a$12$4jTBMwJ6eN0v3FHdmUlikO1W0azArtN7hiNC66XsjBvlbH20GYoa2'),
-       ( '15', '15@email.com', '$2a$12$4jTBMwJ6eN0v3FHdmUlikO1W0azArtN7hiNC66XsjBvlbH20GYoa2');
+-- user the create_new_suggester(username, email, password) function to create several test suggesters
+SELECT create_new_suggester('suggester1', 'email_1@email.com', 'password');
+SELECT create_new_suggester('suggester2', 'email_2@email.com', 'password2');
+SELECT create_new_suggester('suggester3', 'email_3@email.com', 'password3');
+SELECT create_new_suggester('suggester4', 'email_4@email.com', 'password');
+SELECT create_new_suggester('suggester5', 'email_5@email.com', 'password2');
+SELECT create_new_suggester('suggester6', 'email_6@email.com', 'password3');
+SELECT create_new_suggester('suggester7', 'email_7@email.com', 'password');
+SELECT create_new_suggester('suggester8', 'email_8@email.com', 'password2');
+SELECT create_new_suggester('suggester9', 'email_9@email.com', 'password3');
+SELECT create_new_suggester('suggester10', 'email_10@email.com', 'password');
+SELECT create_new_suggester('suggester11', 'email_11@email.com', 'password2');
+SELECT create_new_suggester('suggester12', 'email_12@email.com', 'password3');
+
+
 
 --this query inserts several prefferences into the prefferences table
 INSERT INTO prefferences (prefference_suggester_id, prefference_wants_suggestions, prefference_wants_feedback)
