@@ -8,12 +8,24 @@ The AuthenticationError class is also defined here as it is only raised in the S
 __author__ = "Michael Dormon"
 
 
-from psycopg2.errors import UniqueViolation
+from psycopg2.errors import UniqueViolation, RaiseException
 
+try:
+    from data_access.postgres_connection import connect, PostgresConnectionError
+    from data_access.security.hashing import Hashing
+    from data_access.da_exceptions import NotFoundError, DuplicateError, DatabaseConnectionError, UnexpectedDatabaseError
+except ModuleNotFoundError as e:
+    print(e)
+    try:
+        from classes.data_access.postgres_connection import connect, PostgresConnectionError
+        from classes.data_access.security.hashing import Hashing
+        from classes.data_access.da_exceptions import NotFoundError, DuplicateError, DatabaseConnectionError, UnexpectedDatabaseError
+    except ModuleNotFoundError as e:
+        print(e)
+        from postgres_connection import connect, PostgresConnectionError
+        from security.hashing import Hashing
+        from da_exceptions import NotFoundError, DuplicateError, DatabaseConnectionError, UnexpectedDatabaseError
 
-from data_access.postgres_connection import connect, PostgresConnectionError
-from data_access.security.hashing import Hashing
-from data_access.da_exceptions import NotFoundError, DuplicateError, DatabaseConnectionError, UnexpectedDatabaseError
 
 class AuthenticationError(Exception):
     """
@@ -71,20 +83,16 @@ class SuggesterDA:
         try:
             with connect() as conn:
                 cur = conn.cursor()
-                cur.execute("SELECT try_login(%s, %s)", (suggester_email, suggester_password))
+                cur.execute("SELECT * FROM try_login(%s, %s)", (suggester_email, suggester_password))
                 result = cur.fetchone()
-                print(result) #debug              
+                #print(result) #debug              
         except PostgresConnectionError as e:
-            print("Error: {}".format(e)) #debug
+            #print("Error: {}".format(e)) #debug
             raise DatabaseConnectionError("Error connecting to database.", orig=e)
+        except RaiseException:
+            raise AuthenticationError("Invalid email and password combination.")
         
-        if result is None:
-            raise NotFoundError("Suggester not found.")
-
-        if Hashing.verify(suggester_password, result['password']):
-            return result
-
-        raise AuthenticationError("Incorrect password.")
+        return dict(result)
 
     @staticmethod
     def update_suggester(suggester):
@@ -141,19 +149,30 @@ if __name__ == "__main__":
     """
     This main method is currently only used for testing
     """
-    from dataclasses import dataclass
+    # from dataclasses import dataclass
 
-    @dataclass # define a simple suggester class for testing
-    class Suggester(object):
-        """This is a class that holds information about a suggester.
+    # @dataclass # define a simple suggester class for testing
+    # class Suggester(object):
+    #     """This is a class that holds information about a suggester.
 
-        Information about the suggester includes name, email and some prefferences.
-        Also, there are dictionaries that hold the suggested items to and by the suggester
-        that are used to cache results only after they are requested.
-        """
-        name: str
-        email : str
-        password : str
+    #     Information about the suggester includes name, email and some prefferences.
+    #     Also, there are dictionaries that hold the suggested items to and by the suggester
+    #     that are used to cache results only after they are requested.
+    #     """
+    #     name: str
+    #     email : str
+    #     password : str
 
-    suggester = Suggester("Michael", "email@email.com", "password")
-    returned_value = SuggesterDA.create_suggester(suggester)
+    
+    successful_login = None
+    unsuccessful_login = None
+    try:
+        successful_login = SuggesterDA.try_login('email_1@email.com','password')
+        unsuccessful_login = SuggesterDA.try_login('email_1@email.com','wrong_password')
+        print(successful_login)
+        print(unsuccessful_login)
+    except AuthenticationError as e:
+        print(e)
+
+    # suggester = Suggester("Michael", "email@email.com", "password")
+    # returned_value = SuggesterDA.create_suggester(suggester)

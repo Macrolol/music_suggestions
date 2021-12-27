@@ -301,29 +301,37 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+
 DROP FUNCTION IF EXISTS try_login(arg_email text, arg_password text);
 CREATE OR REPLACE FUNCTION try_login(arg_email text, arg_password text)
-RETURNS record AS
+RETURNS TABLE ( tag text, email varchar(100), wants_suggestions boolean, wants_feedback boolean) AS
 $$
 DECLARE
     logging_in_suggester_with_password record;
-    logging_in_suggester record;
 BEGIN
     SELECT *
     INTO logging_in_suggester_with_password
     FROM suggester
     WHERE suggester_email = arg_email;
 
-    IF logging_in_suggester_id IS NULL THEN
-        RETURN NULL;
+    IF logging_in_suggester_with_password IS NULL THEN
+        RAISE EXCEPTION 'No suggester with email % exists', arg_email;
     END IF;
-    IF crypt(arg_password, logging_in_suggester.suggester_password) THEN
-        SELECT suggester_id, suggester_email, suggester_username, suggester_created_date
-        FROM  logging_in_suggester
-        INTO logging_in_suggester;
-        RETURN logging_in_suggester;
+    IF (logging_in_suggester_with_password.suggester_password = crypt(arg_password, logging_in_suggester_with_password.suggester_password)) THEN
+        RETURN QUERY (
+            SELECT logging_in_suggester_with_password.suggester_id
+                   tags.suggester_tag,
+                   logging_in_suggester_with_password.suggester_email,
+                   prefference_wants_suggestions,
+                   prefference_wants_feedback
+            FROM suggester_tags_view tags
+            JOIN prefferences ON prefference_suggester_id = tags.suggester_id
+            WHERE tags.suggester_id = logging_in_suggester_with_password.suggester_id
+        );
+    ELSE
+        RAISE EXCEPTION 'Invalid password for suggester with email %', arg_email;
     END IF;
-    RETURN NULL;
+   
 END;
 $$ LANGUAGE plpgsql;
 

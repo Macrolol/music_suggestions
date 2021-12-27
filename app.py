@@ -1,18 +1,13 @@
-from flask import Flask
-from jinja2 import render_template
+from flask import Flask, request
+from classes.suggesters import Suggester
 
-from classes.data import Suggester
+
+#from classes.data import Suggester
 
 
 
 app = Flask(__name__)
 
-
-@app.route('/')
-def index():
-    dummy_suggester = Suggester("michael", "email@email.com")
-
-    return render_template('index.html', dummy_suggester)
 
 @app.route('/api/<int:suggester_id>/suggested_by')
 def suggested_by(suggester_id):
@@ -26,4 +21,9 @@ def suggested_to(suggester_id):
 
 @app.route('/api/wants_suggestions/<int:limit>')
 def wants_suggestions(limit):
-    
+    pass
+
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    print("login attempt: {}", str(data))

@@ -20,9 +20,10 @@ class Suggester(object):
     that are used to cache results only after they are requested.
     """
     id : int
-    name: str
+    tag: str
     email : str
     wants_suggestions : bool = True
+    wants_feedback : bool = True
     suggested_to_items : dict = field(default_factory=dict)
     suggested_by_items : dict = field(default_factory=dict)
 
@@ -32,13 +33,14 @@ class Suggester(object):
         sug = SuggesterDA.get_suggester_by_id(id)
         return Suggester( sug['id'], sug['name'], sug['email'], sug['wants_suggestions'])
 
+
+    # this method is called when a suggeseter is attempting to login
+    # it returns a suggester object if the login is successful
+    # it raises an AuthenticationError if the login is unsuccessful
     @staticmethod
     def try_login(email, password):
-        try:
-            sug = SuggesterDA.try_login(email, password)
-        except AuthenticationError:
-            return None
-        return Suggester(sug['id'], sug['name'], sug['email'], sug['wants_suggestions'])
+        sug = SuggesterDA.try_login(email, password)
+        return Suggester(sug['id'], sug['name'], sug['email'], sug['wants_suggestions'], sug['wants_feedback'])
 
 
     # bad old dead code, probably will be removed soon
