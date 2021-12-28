@@ -6,7 +6,10 @@ __author__ = "Michael Dormon"
 
 from dataclasses import field, dataclass
 
-from data_access.suggester_da import AuthenticationError, SuggesterDA
+try:
+    from classes.data_access.suggester_da import SuggesterDA
+except ModuleNotFoundError as e:
+    from data_access.suggester_da import AuthenticationError, SuggesterDA
 
 
 
@@ -24,8 +27,6 @@ class Suggester(object):
     email : str
     wants_suggestions : bool = True
     wants_feedback : bool = True
-    suggested_to_items : dict = field(default_factory=dict)
-    suggested_by_items : dict = field(default_factory=dict)
 
 
     @staticmethod
@@ -35,8 +36,8 @@ class Suggester(object):
 
 
     # this method is called when a suggeseter is attempting to login
-    # it returns a suggester object if the login is successful
-    # it raises an AuthenticationError if the login is unsuccessful
+    # it returns a suggester object if the login is successful.
+    # it raises an AuthenticationError if the login is unsuccessful.
     @staticmethod
     def try_login(email, password):
         sug = SuggesterDA.try_login(email, password)

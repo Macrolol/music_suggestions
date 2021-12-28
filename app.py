@@ -26,4 +26,8 @@ def wants_suggestions(limit):
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
-    print("login attempt: {}", str(data))
+    user = Suggester.try_login(data['email'], data['password'])
+    print("login attempt: {}, {}".format(data['email'] , data['password']))
+    if user is None:
+        return 'Invalid login credentials', 401
+    return user.to_json()
