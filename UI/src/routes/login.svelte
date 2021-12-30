@@ -17,8 +17,9 @@
 <script>
 	import { AuthenticationError } from '$lib/errors/AuthenticationError.js';
 	import { validateEmail } from '$lib/validateEmail.js';
-	import { session } from '$lib/stores';
+	import { session } from '$app/stores';
 	import { goto, prefetch } from '$app/navigation';
+	import { addMessage} from '$lib/messaging/messages.js'
 	
 	
 	const inputs = {
@@ -28,7 +29,7 @@
 	let logging_in;
 	
 	const tryLogin = async () => {
-		const loginResponse = await fetch("/api/login", {
+		const loginResponse = await fetch("http://127.0.0.1:5000/api/login", {
   			method: "POST",
   			headers: {'Content-Type': 'application/json'}, 
  			body: JSON.stringify(inputs)
@@ -39,19 +40,28 @@
 		throw new AuthenticationError(loginResponse.status); 
 	}
 
-	const handleLogin = (event) => {
+	const handleLogin = async (event) => {
 		if (validateEmail(inputs.email_address) && inputs.password.length > 0 ){
 			logging_in = tryLogin();
 			logging_in.then(
 				(userDetails) => {
 					$session.user = userDetails;	
+					addMessage('success', 'Successfully logged in as ' + userDetails.tag);
 					goto('/');
 				})
 				.catch(
 				(error) => {
-					inputs.password = '';
+					if (error instanceof AuthenticationError){
+						addMessage('danger', 'Invalid email or password');
+						inputs.password = '';
+					}
+					else {
+						addMessage('danger', 'An error occurred');
+					}
 				}
 			);
+		} else {
+			addMessage('danger', 'Please enter a valid email address');
 		}
 	};
 </script>

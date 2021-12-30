@@ -32,7 +32,7 @@ class Suggester(object):
     @staticmethod
     def from_id(id):
         sug = SuggesterDA.get_suggester_by_id(id)
-        return Suggester( sug['id'], sug['name'], sug['email'], sug['wants_suggestions'])
+        return Suggester( sug['id'], sug['tag'], sug['email'], sug['wants_suggestions'], sug['wants_feedback'] )
 
 
     # this method is called when a suggeseter is attempting to login
@@ -41,7 +41,7 @@ class Suggester(object):
     @staticmethod
     def try_login(email, password):
         sug = SuggesterDA.try_login(email, password)
-        return Suggester(sug['id'], sug['name'], sug['email'], sug['wants_suggestions'], sug['wants_feedback'])
+        return Suggester(sug['id'], sug['tag'], sug['email'], sug['wants_suggestions'], sug['wants_feedback'])
 
 
     # bad old dead code, probably will be removed soon

@@ -304,7 +304,7 @@ $$ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS try_login(arg_email text, arg_password text);
 CREATE OR REPLACE FUNCTION try_login(arg_email text, arg_password text)
-RETURNS TABLE ( tag text, email varchar(100), wants_suggestions boolean, wants_feedback boolean) AS
+RETURNS TABLE ( id integer, tag text, email varchar(100), wants_suggestions boolean, wants_feedback boolean) AS
 $$
 DECLARE
     logging_in_suggester_with_password record;
@@ -319,11 +319,11 @@ BEGIN
     END IF;
     IF (logging_in_suggester_with_password.suggester_password = crypt(arg_password, logging_in_suggester_with_password.suggester_password)) THEN
         RETURN QUERY (
-            SELECT logging_in_suggester_with_password.suggester_id
-                   tags.suggester_tag,
-                   logging_in_suggester_with_password.suggester_email,
-                   prefference_wants_suggestions,
-                   prefference_wants_feedback
+            SELECT logging_in_suggester_with_password.suggester_id AS id,
+                   tags.suggester_tag AS tag,
+                   logging_in_suggester_with_password.suggester_email AS email,
+                   prefference_wants_suggestions AS wants_suggestions,
+                   prefference_wants_feedback AS wants_feedback
             FROM suggester_tags_view tags
             JOIN prefferences ON prefference_suggester_id = tags.suggester_id
             WHERE tags.suggester_id = logging_in_suggester_with_password.suggester_id
