@@ -1,8 +1,14 @@
 <script context="module">
 
-	export async function load({page, fetch, session, stuff}) {
-		if ('user' in session) {
-			
+	export async function load({ session }) {
+		console.log("Login page loaded");
+		if (session.user) {
+			if (session.user.logging_in){
+				session.user.logging_in = false;
+			} else {
+				addMessage('danger', 'You are already logged in.');
+			}
+		
 			return {
 				redirect: '/',
 				status : 301
@@ -18,48 +24,62 @@
 	import { AuthenticationError } from '$lib/errors/AuthenticationError.js';
 	import { validateEmail } from '$lib/validateEmail.js';
 	import { session } from '$app/stores';
-	import { goto, prefetch } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { addMessage} from '$lib/messaging/messages.js'
+	import { postRequest } from '$lib/requests.js';
 	
+
+
 	
 	const inputs = {
 		email_address : null,
 		password : null
 	};
+
+	// define this here so that the promise from tryLogin
+	// can be stored in it, and it can be accessed in the
+	// UI for #await block
 	let logging_in;
 	
 	const tryLogin = async () => {
-		const loginResponse = await fetch("http://127.0.0.1:5000/api/login", {
-  			method: "POST",
-  			headers: {'Content-Type': 'application/json'}, 
- 			body: JSON.stringify(inputs)
-		});
-		if (loginResponse.ok) {
-			return await loginResponse.json();
+		try{ 
+			const loginResponse = await postRequest({
+				path: '/auth/login', 
+				data: {
+					email_address: inputs.email_address,
+					password: inputs.password
+				}
+			});
+			return loginResponse;
+		} catch (err) {
+			console.log(err);
+			throw new AuthenticationError();
 		}
-		throw new AuthenticationError(loginResponse.status); 
+	
 	}
 
-	const handleLogin = async (event) => {
+		const handleLogin = async (event) => {
 		if (validateEmail(inputs.email_address) && inputs.password.length > 0 ){
-			logging_in = tryLogin();
-			logging_in.then(
-				(userDetails) => {
-					$session.user = userDetails;	
-					addMessage('success', 'Successfully logged in as ' + userDetails.tag);
-					goto('/');
-				})
-				.catch(
-				(error) => {
-					if (error instanceof AuthenticationError){
+			try {
+
+				logging_in = tryLogin();
+				console.log(logging_in);
+				const { user }  = await logging_in;
+				console.log(user);
+				console.log("Before Session set");
+				user.logging_in = true;
+				$session.user =  user;
+				addMessage('success', 'Successfully logged in as ' + user.tag);
+
+			} catch(error) {
+				if (error instanceof AuthenticationError){
 						addMessage('danger', 'Invalid email or password');
 						inputs.password = '';
-					}
-					else {
+				} else {
+					console.log(error);
 						addMessage('danger', 'An error occurred');
-					}
 				}
-			);
+			}
 		} else {
 			addMessage('danger', 'Please enter a valid email address');
 		}
@@ -67,30 +87,45 @@
 </script>
 
 <style>
-  .content {
-    display: grid;
-    grid-template-columns: 20% 80%;
-    grid-column-gap: 10px;
+	.container {
+		display : flex;
+		flex-direction : column;
+		justify-content : left;
+	}
+
+	.container > * {
+		margin-bottom : 0.5rem;
+	}
+
+	/*
+  	.content {
+    	display: grid;
+    	grid-template-columns: 20% 80%;
+ 	   	grid-column-gap: 10px;
+		grid-row-gap: 10px;
 		margin : 20px;
-  }
+  	}
+  	.login{
+		grid-column: 2;
+  	}
+	*/
 </style>
 <h3>
 		Login
 </h3>
 
-<form class='content'>
+<form class='container'>
 	<label for="email_address">Email Address</label>
-	<input name="email_address" id="email_address" type="text" bind:value={inputs.email_address}/>
+	<input placeholder="Email" name="email_address" id="email_address" type="text" bind:value={inputs.email_address}/>
 	<label for="password">Password</label>
-	<input name="password" id="pwassword" type="password" bind:value={inputs.password}/>
-</form>
-<button on:click|preventDefault={handleLogin}>
+	<input placeholder="Password" name="password" id="password" type="password" bind:value={inputs.password}/>
+
+	<button class=login type=submit on:click|preventDefault={handleLogin}>
 		Login
-</button>
+	</button>
 
+</form>
 	
-
-<p>
-	Email Address is: {inputs.email_address} <br/>
-	Password is: {inputs.password}
-</p>
+<button on:click={() => goto('/register')}>
+		Register
+</button>

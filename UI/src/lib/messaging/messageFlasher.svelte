@@ -2,9 +2,9 @@
     import MessageDisplayer from "$lib/messaging/messageDisplayer.svelte";    
     import { messages } from "$lib/messaging/messages.js";
 
-    console.debug($messages);
+    //console.debug($messages);
     const closeMessage = (e) => {
-        console.debug("closeMessage: ", e);
+        //console.debug("closeMessage: ", e);
         for (const [mes, i] of $messages.entries()) {
             if (mes.created === e.messageCreated) {
                 $messages.splice(i, 1);

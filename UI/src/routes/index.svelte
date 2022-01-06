@@ -4,10 +4,10 @@ import { addMessage } from '$lib/messaging/messages.js';
 
 
     let input;
+    let req = "";
 
     const submit = () => {
-
-        addMessage('success', 'this is the message text');
+       
     };
 
 </script>
@@ -20,5 +20,10 @@ import { addMessage } from '$lib/messaging/messages.js';
 <h1>Welcome to SvelteKit</h1>
 <p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
 <input type="text" bind:value={input}/>
-<p> {input} </p>
+<p> {#await req}
+    waiting for response
+{:then response } 
+    {JSON.stringify(response)}
+{/await} </p>
+
 <button on:click={submit}>Submit</button>

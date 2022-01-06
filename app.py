@@ -1,7 +1,7 @@
-from flask import Flask, request
+from flask import Flask, request,jsonify
 from classes.suggesters import Suggester
 from flask_cors import CORS
-import jsons;
+from datetime import datetime
 #from classes.data import Suggester
 
 
@@ -29,7 +29,7 @@ def login():
     print(data)
     print("login attempt: {}, {}".format(data['email_address'] , data['password']))
     user = Suggester.try_login(data['email_address'], data['password'])
-   
+    print(user) 
     if user is None:
-        return 'Invalid login credentials', 401
-    return jsons.dump(user), 200
+        return { 'error' : 'Invalid login credentials'}, 401
+    return jsonify(user), 200
