@@ -1,7 +1,6 @@
 
 
-<script>
- 
+<script> 
     import MessageFlasher from "$lib/messaging/messageFlasher.svelte";
     import NavBar from "$lib/navBar.svelte";
     import { session } from "$app/stores"

@@ -1,23 +1,15 @@
-import { verifyToken } from "$lib/auth/jwt"
-import cookie from 'cookie';
+import {proccessCookies} from './processCookies.js';
 
 export const handle = async ({request, resolve}) => {
 
-    if (request.headers.cookie) {
-   
-        try{
-            const token = cookie.parse(request.headers.cookie).token;
-            const { user } = await verifyToken(token);
-            request.locals.user = user;
-            if (!request.headers.authorization) {
-                request.headers.authorization = `Bearer ${token}`;
-            }
-        } catch (err) {
-            console.log(err);
-            return {status : 500, body : {error : `Token Error ${err.message}, maybe login again`}}; 
-        }
+    const cookieErrorResponse = await proccessCookies(request);    
+    if (cookieErrorResponse) {
+        return cookieErrorResponse;
     }
-    return resolve(request);
+
+    const response = await resolve(request);
+    console.log(response);
+    return response;
 }
 
 export const getSession = (request) => {

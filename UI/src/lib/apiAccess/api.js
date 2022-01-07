@@ -3,7 +3,7 @@ import { getRequest, postRequest } from '$lib/requests';
 
 
 const apiUrl = envVar('API_URL');
-console.log(apiUrl);
+//console.log(apiUrl);
 
 
 

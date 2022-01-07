@@ -5,6 +5,6 @@ const reValidEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".
 export const validateEmail = (potentialAddress) => {
 	let lowercaseString = String(potentialAddress).toLowerCase();
 	let matchResult = lowercaseString.match(reValidEmail);
-	console.log(`match result : ${matchResult}`);
+	//console.log(`match result : ${matchResult}`);
 	return !!matchResult ;
 };

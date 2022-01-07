@@ -1,8 +1,8 @@
 const myVars = {
     API_URL: import.meta.env.VITE_API_URL,
 }
-console.log(myVars);
-console.log(import.meta.env);
+//console.log(myVars);
+//console.log(import.meta.env);
 //thrown when an evironmental variable is not set when it is required
 class EnvironmentError extends Error {
     constructor(message) {

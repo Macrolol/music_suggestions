@@ -1,10 +1,6 @@
+import { okResponse } from "$lib/responseBuilder";
 
-
-export const get = async (request) => {
-    return {
-        status : 200,
-        headers : {
-            "Set-Cookie" : `token=; HttpOnly; SameSite=Strict; Max-Age=0`
-        }
-    };
+export const post = async (request) => {
+    console.log("Post Logout.js");
+    return okResponse({options : { removeCookie : 'token' }});
 }

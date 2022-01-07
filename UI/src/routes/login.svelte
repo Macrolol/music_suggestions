@@ -3,12 +3,7 @@
 	export async function load({ session }) {
 		console.log("Login page loaded");
 		if (session.user) {
-			if (session.user.logging_in){
-				session.user.logging_in = false;
-			} else {
-				addMessage('danger', 'You are already logged in.');
-			}
-		
+			addMessage('danger', 'You are already logged in.');
 			return {
 				redirect: '/',
 				status : 301
@@ -39,7 +34,7 @@
 	// define this here so that the promise from tryLogin
 	// can be stored in it, and it can be accessed in the
 	// UI for #await block
-	let logging_in;
+	let loggingIn;
 	
 	const tryLogin = async () => {
 		try{ 
@@ -52,8 +47,13 @@
 			});
 			return loginResponse;
 		} catch (err) {
+			if (err instanceof RequestError){
+				if (err.status === 401){
+					throw new AuthenticationError('Invalid email or password');
+				}
+			}
 			console.log(err);
-			throw new AuthenticationError();
+			throw err;
 		}
 	
 	}
@@ -62,14 +62,15 @@
 		if (validateEmail(inputs.email_address) && inputs.password.length > 0 ){
 			try {
 
-				logging_in = tryLogin();
-				console.log(logging_in);
-				const { user }  = await logging_in;
+				loggingIn = tryLogin();
+				console.log(loggingIn);
+				const { user }  = await loggingIn;
 				console.log(user);
-				console.log("Before Session set");
-				user.logging_in = true;
-				$session.user =  user;
-				addMessage('success', 'Successfully logged in as ' + user.tag);
+				goto('/').then(() => {
+					$session.user = user
+					addMessage('success', 'Successfully logged in as ' + user.tag);
+				});
+				
 
 			} catch(error) {
 				if (error instanceof AuthenticationError){
@@ -77,7 +78,7 @@
 						inputs.password = '';
 				} else {
 					console.log(error);
-						addMessage('danger', 'An error occurred');
+					addMessage('danger', 'An error occurred');
 				}
 			}
 		} else {

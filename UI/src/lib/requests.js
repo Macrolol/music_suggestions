@@ -1,3 +1,13 @@
+
+class RequestError extends Error {
+    constructor(message, status, response) {
+        super(message);
+        this.status = status;
+        this.response = response
+        this.name = 'RequestError';
+    }
+}
+
 // found a pattern similar to this in one of the sveltekit examples
 // here: https://github.com/sveltejs/realworld/blob/master/src/lib/api.js
 // returns a promise with the json response
@@ -19,7 +29,7 @@ const sendRequest = async ({method, path, data, auth}) => {
         options.headers['Authorization'] = `Bearer ${auth}`;
     }
 
-    console.debug(`Sending request to ${path}`);
+    //console.debug(`Sending request to ${path}`);
     // send the request to the api at the path specified with the options
     let response = await fetch(path, options)
     //if the response is ok return the response in json format
@@ -27,7 +37,7 @@ const sendRequest = async ({method, path, data, auth}) => {
         return await response.json();
     }
     //otherwise throw an error
-    throw new Error(response.statusText);
+    throw new RequestError(response.statusText, response.status, response);
 };
 
 
