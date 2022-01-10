@@ -1,9 +1,9 @@
 
-class RequestError extends Error {
+export class RequestError extends Error {
     constructor(message, status, response) {
         super(message);
         this.status = status;
-        this.response = response
+        this.response = response;
         this.name = 'RequestError';
     }
 }
@@ -31,13 +31,18 @@ const sendRequest = async ({method, path, data, auth}) => {
 
     //console.debug(`Sending request to ${path}`);
     // send the request to the api at the path specified with the options
+    console.log(`Sending request to ${path} with options: ${JSON.stringify(options)}`);
     let response = await fetch(path, options)
     //if the response is ok return the response in json format
     if (response.ok) {
         return await response.json();
     }
+    console.log(JSON.stringify(response) + "Line 39");
     //otherwise throw an error
-    throw new RequestError(response.statusText, response.status, response);
+    if (response){
+        throw new RequestError(response.body.message || "Error from response", response.status, response);
+    }
+    throw new RequestError("No response recieved", "", "");
 };
 
 

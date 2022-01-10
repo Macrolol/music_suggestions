@@ -22,9 +22,9 @@
 	import { goto } from '$app/navigation';
 	import { addMessage} from '$lib/messaging/messages.js'
 	import { postRequest } from '$lib/requests.js';
-	
-
-
+	import FormControl from '$lib/forms/formControl.svelte';
+	import Button from '$lib/forms/button.svelte';
+	import Form from '$lib/forms/form.svelte';
 	
 	const inputs = {
 		email_address : null,
@@ -52,7 +52,7 @@
 					throw new AuthenticationError('Invalid email or password');
 				}
 			}
-			console.log(err);
+			console.log(err); //debug
 			throw err;
 		}
 	
@@ -63,7 +63,7 @@
 			try {
 
 				loggingIn = tryLogin();
-				console.log(loggingIn);
+				//console.log(loggingIn); //debug
 				const { user }  = await loggingIn;
 				console.log(user);
 				goto('/').then(() => {
@@ -77,7 +77,7 @@
 						addMessage('danger', 'Invalid email or password');
 						inputs.password = '';
 				} else {
-					console.log(error);
+					console.log(error); // debug
 					addMessage('danger', 'An error occurred');
 				}
 			}
@@ -87,46 +87,46 @@
 	};
 </script>
 
-<style>
-	.container {
-		display : flex;
-		flex-direction : column;
-		justify-content : left;
-	}
-
-	.container > * {
-		margin-bottom : 0.5rem;
-	}
-
-	/*
-  	.content {
-    	display: grid;
-    	grid-template-columns: 20% 80%;
- 	   	grid-column-gap: 10px;
-		grid-row-gap: 10px;
-		margin : 20px;
-  	}
-  	.login{
-		grid-column: 2;
-  	}
-	*/
-</style>
 <h3>
 		Login
 </h3>
 
-<form class='container'>
-	<label for="email_address">Email Address</label>
-	<input placeholder="Email" name="email_address" id="email_address" type="text" bind:value={inputs.email_address}/>
-	<label for="password">Password</label>
-	<input placeholder="Password" name="password" id="password" type="password" bind:value={inputs.password}/>
-
-	<button class=login type=submit on:click|preventDefault={handleLogin}>
-		Login
-	</button>
-
-</form>
+<Form>
 	
-<button on:click={() => goto('/register')}>
-		Register
-</button>
+	<FormControl props={{
+		label: 'Email Address',
+		type: 'email',
+		name: 'email_address',
+		placeholder : 'Email Address',
+	}}
+	bind:value={inputs.email_address}
+	/>
+
+	<FormControl props={{
+		label: 'Password',
+		type: 'password',
+		name: 'password',
+		placeholder : 'Password',
+	}}
+	bind:value={inputs.password}/>
+
+
+	<Button
+	props={{
+		label: 'Login',
+		type: 'submit',
+		value : 'Login'
+	}}
+	on:click={handleLogin}/>
+
+	
+
+</Form>
+	
+<Button
+	props={{
+		label: 'Register',
+		type: 'button',
+		value : 'Register'
+	}}
+on:click={() => goto('/register')}/>

@@ -24,8 +24,8 @@ const removeCookieOptions = {
 } */
 const buildResponse = ({status, body, options}) => {
     body = body || {};
-    const headers = options.headers || {};
-    headers['Set-Cookie'] = [];
+    const headers = options ? options.headers || {} : {}; // set headers to either options.headers or an empty object;
+    headers['Set-Cookie'] = headers['Set-Cookie']  || [];
     if (options) {
         if (options.setCookies && options.setCookies.length) {
             

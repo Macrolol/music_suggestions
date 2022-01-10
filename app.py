@@ -26,10 +26,22 @@ def wants_suggestions(limit):
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
-    print(data)
+    print(data) # debug
     print("login attempt: {}, {}".format(data['email_address'] , data['password']))
     user = Suggester.try_login(data['email_address'], data['password'])
-    print(user) 
-    if user is None:
+    print(user) # debug 
+    if not user:  
         return { 'error' : 'Invalid login credentials'}, 401
     return jsonify(user), 200
+
+
+@app.route('/api/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    print(data) # debug
+    print("register attempt: {}, {}".format(data['email_address'] , data['password'], data['username']))
+    id = Suggester.try_register(data['email_address'], data['password'], data['username'])
+    print( id ) # debug
+    if not id:
+        return { 'message' : 'Invalid login credentials'}, 401
+    return jsonify(id), 200

@@ -117,7 +117,7 @@ class SuggesterDA:
         return result
 
     @staticmethod
-    def create_suggester(suggester):
+    def create_suggester(email, username, password):
         """
         This method adds a new suggester to the database if one of the same name does not already exist.
 
@@ -128,7 +128,7 @@ class SuggesterDA:
         try:
             with connect() as conn:
                 cur = conn.cursor()
-                cur.execute("INSERT INTO suggester (suggester_name, suggester_email, suggester_password) VALUES (%s, %s, %s) RETURNING suggester_id", (suggester.name, suggester.email, suggester.password))
+                cur.execute("SELECT create_new_suggester(%s, %s, %s);", (username, email, password))
                 result = cur.fetchone()
                 print(result) #debug
         except PostgresConnectionError as e:
@@ -143,7 +143,7 @@ class SuggesterDA:
         if result is None:
             raise UnexpectedDatabaseError("Unexpected error, something is very wrong.")
 
-        return result['suggester_id']
+        return result['create_new_suggester']
 
 if __name__ == "__main__":
     """

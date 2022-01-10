@@ -337,7 +337,7 @@ $$ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS create_new_suggester(arg_username text, arg_email text, arg_password text);
 CREATE OR REPLACE FUNCTION create_new_suggester(arg_username text, arg_email text, arg_password text)
-RETURNS record AS
+RETURNS int AS
 $$
 DECLARE
     existing_suggester_id integer;
@@ -350,8 +350,8 @@ BEGIN
     IF existing_suggester_id IS NULL THEN
         INSERT INTO suggester (suggester_username, suggester_tag_discriminator, suggester_password, suggester_email)
         VALUES (arg_username, generate_tag_discriminator(arg_username), crypt(arg_password, gen_salt('bf')), arg_email)
-        RETURNING suggester_id, suggester_username, suggester_email, suggester_created_date INTO new_suggester;
-        RETURN new_suggester;
+        RETURNING suggester_id INTO new_suggester;
+        RETURN new_suggester.suggester_id;
     END IF;
     RETURN NULL;
 END;
