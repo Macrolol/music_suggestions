@@ -1,3 +1,4 @@
+
 """
 postgres_connection.py: This file defines the connect() function used to connect to the Postgres database.
     as well as the PostgresConnectionError exception. It also builds the connection string used to connect

@@ -15,7 +15,6 @@ KEYS = {
     'album' : 'AL'
 }
 
-def suggest_to()
 
 def get_suggestions_to(suggestee_id, suggestion_type, limit=10):
     """

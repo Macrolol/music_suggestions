@@ -19,8 +19,7 @@ class Suggester(object):
     """This is a class that holds information about a suggester.
 
     Information about the suggester includes name, email and some prefferences.
-    Also, there are dictionaries that hold the suggested items to and by the suggester
-    that are used to cache results only after they are requested.
+    
     """
     id : int
     tag: str

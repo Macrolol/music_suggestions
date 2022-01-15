@@ -145,6 +145,7 @@ class SuggesterDA:
 
         return result['create_new_suggester']
 
+
 if __name__ == "__main__":
     """
     This main method is currently only used for testing
