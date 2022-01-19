@@ -10,6 +10,12 @@ const dispatch = createEventDispatcher();
 const handleClick = (event) => {
     dispatch('click', event);    
 }
+
+let value = props.value;
+let type = props.type;
+delete props.type;
+delete props.value;
+
 </script>
 
 <style>
@@ -21,6 +27,6 @@ button {
 
 
 
-<button type={props.type}  on:click|preventDefault={handleClick}>
-		{props.value}
+<button type={type} {...props} on:click|preventDefault={handleClick}>
+		{value}
 </button>

@@ -36,7 +36,7 @@ export const proccessCookies = async (request) => {
                     return errorResponse({
                         status: 401,
                         body: {
-                            'serverMessage': 'Invalid token'
+                            message: 'Invalid token'
                         }
                         , options: {
                             removeCookie: 'token'
@@ -53,7 +53,8 @@ export const proccessCookies = async (request) => {
         //if there are extra cookies, remove them
         const remainingCookies = Object.keys(cookies);
         if (remainingCookies.length) {
-            errorResponse({
+            console.debug(`Remaining cookies: ${JSON.stringify(remainingCookies)}`); //debug
+            return errorResponse({
                 status: 402,
                 body: {
                     message: 'Invalid cookies'

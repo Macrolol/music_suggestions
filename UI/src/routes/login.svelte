@@ -113,7 +113,7 @@
 
 	<Button
 	props={{
-		label: 'Login',
+		id: 'login-button',
 		type: 'submit',
 		value : 'Login'
 	}}
@@ -125,7 +125,7 @@
 	
 <Button
 	props={{
-		label: 'Register',
+		id: 'register-button',
 		type: 'button',
 		value : 'Register'
 	}}

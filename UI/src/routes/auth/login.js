@@ -1,6 +1,7 @@
 import { generateToken } from "$lib/auth/jwt";
 import { apiPost } from "$lib/apiAccess/api";
 import { okResponse, errorResponse } from '$lib/responseBuilder';
+import { RequestError } from "$lib/requests";
 
 
 export const post = async (request) => {

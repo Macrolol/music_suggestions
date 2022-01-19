@@ -62,7 +62,7 @@ const clicked = (e) => {
 </style>
 
 <div class="{message.type ? message.type : 'success' } message-box">
-    <div class=messageText>
+    <div class=messageText name={message.type + "-message"} >
         <slot>
             <p>{message.text}</p>
         </slot>

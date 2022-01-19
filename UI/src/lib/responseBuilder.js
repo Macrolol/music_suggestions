@@ -29,7 +29,7 @@ const buildResponse = ({status, body, options}) => {
     if (options) {
         if (options.setCookies && options.setCookies.length) {
             
-            headers['Set-Cookie'].concat(
+                headers['Set-Cookie'] = headers['Set-Cookie'].concat(
                 options.setCookies.map(
                     cookieToSet => {
                         return cookie.serialize(cookieToSet.name, cookieToSet.value, cookieOptions);
@@ -43,19 +43,22 @@ const buildResponse = ({status, body, options}) => {
 
         if (options.removeCookies && options.removeCookies.length) {
             
-            headers['Set-Cookie'].concat(
+                headers['Set-Cookie'] = headers['Set-Cookie'].concat(
                 options.removeCookies.map(
                     cookieToRemove => {
-                        return cookie.serialize(cookieToRemove, '', removeCookieOptions)
+                        value = cookie.serialize(cookieToRemove, '', removeCookieOptions)
+                        console.debug(`Removing cookie: ${value}`);
+                        return value; 
                     }
                 )
             );
+           
 
         } else if (options.removeCookie) {
             headers['Set-Cookie'].push(cookie.serialize(options.removeCookie, '', removeCookieOptions));
         }
     }
-   
+    console.debug(headers['Set-Cookie']);
     return {
         status,
         headers,

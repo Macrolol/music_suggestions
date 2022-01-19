@@ -25,6 +25,12 @@
 				$session.user = null;
 				addMessage('success','You have been logged out.');
 			});
+		})
+		.catch(err => {
+				console.log(err);
+				goto('/', {replaceState: true}).then( () => {
+				addMessage('danger','There was a problem logging you out.');
+			});
 		});
 	});
 
