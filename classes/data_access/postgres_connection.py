@@ -24,16 +24,18 @@ from psycopg2.extras import RealDictCursor
 #build the connection string
 connection_string = ""
 if os.environ['DB_NAME'] == 'testing_db':    
-    connection_string = "dbname='{}' user='{}' host='{}'".format(
-        os.environ['DB_NAME'],
-        os.environ['DB_USER'],
-        os.environ['DB_HOST'])
-else:
-    connection_string = "dbname='{}' user='{}' host='{}' password='{}'".format(
+    connection_string = "dbname='{}' user='{}' host='{}' connect_timeout='{}'".format(
         os.environ['DB_NAME'],
         os.environ['DB_USER'],
         os.environ['DB_HOST'],
-        os.environ['DB_PASSWORD'])
+        4)
+else:
+    connection_string = "dbname='{}' user='{}' host='{}' password='{}' connect_timeout='{}'".format(
+        os.environ['DB_NAME'],
+        os.environ['DB_USER'],
+        os.environ['DB_HOST'],
+        os.environ['DB_PASSWORD'],
+        4)
 
 class PostgresConnectionError(Exception):
     """
@@ -45,7 +47,7 @@ class PostgresConnectionError(Exception):
 
 def connect():
     #connect to the pg instance
-    print("connecting with connection string: {}", connection_string) #debug
+    print("connecting with connection string: {}".format(connection_string)) #debug
     try:
         conn = pg_connect(connection_string, cursor_factory=RealDictCursor)
     except OperationalError as e:

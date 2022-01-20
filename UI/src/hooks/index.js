@@ -8,7 +8,7 @@ export const handle = async ({request, resolve}) => {
     }
 
     const response = await resolve(request);
-    console.log(response);
+    //console.log(response); //debug
     return response;
 }
 

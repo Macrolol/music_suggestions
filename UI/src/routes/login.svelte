@@ -21,14 +21,14 @@
 	import { session } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { addMessage} from '$lib/messaging/messages.js'
-	import { postRequest } from '$lib/requests.js';
+	import { postRequest, RequestError } from '$lib/requests.js';
 	import FormControl from '$lib/forms/formControl.svelte';
 	import Button from '$lib/forms/button.svelte';
 	import Form from '$lib/forms/form.svelte';
 	
 	const inputs = {
-		email_address : null,
-		password : null
+		email_address : '',
+		password : ''
 	};
 
 	// define this here so that the promise from tryLogin
@@ -47,7 +47,7 @@
 			});
 			return loginResponse;
 		} catch (err) {
-			if (err instanceof RequestError){
+			if (err instanceof RequestError || err.name === 'RequestError') {
 				if (err.status === 401){
 					throw new AuthenticationError('Invalid email or password');
 				}
@@ -59,30 +59,34 @@
 	}
 
 		const handleLogin = async (event) => {
-		if (validateEmail(inputs.email_address) && inputs.password.length > 0 ){
-			try {
+		if (validateEmail(inputs.email_address)){
+			if (inputs.password.length > 0){
+				try {
+					loggingIn = tryLogin();
+					//console.log(loggingIn); //debug
+					const { user }  = await loggingIn;
+					console.log(user);
+					goto('/').then(() => {
+						$session.user = user
+						addMessage('success', 'Successfully logged in as ' + user.tag);
+					});
+					
 
-				loggingIn = tryLogin();
-				//console.log(loggingIn); //debug
-				const { user }  = await loggingIn;
-				console.log(user);
-				goto('/').then(() => {
-					$session.user = user
-					addMessage('success', 'Successfully logged in as ' + user.tag);
-				});
-				
-
-			} catch(error) {
-				if (error instanceof AuthenticationError){
-						addMessage('danger', 'Invalid email or password');
-						inputs.password = '';
-				} else {
-					console.log(error); // debug
-					addMessage('danger', 'An error occurred');
+				} catch(error) {
+					if (error instanceof AuthenticationError){
+							addMessage('danger', 'Invalid email or password');
+							inputs.password = '';
+					} else {
+						console.log(error); // debug
+						addMessage('danger', error.message);
+					}
 				}
+			} else {
+				addMessage('danger', 'Please enter a password');
 			}
 		} else {
 			addMessage('danger', 'Please enter a valid email address');
+			inputs.email_address = '';
 		}
 	};
 </script>

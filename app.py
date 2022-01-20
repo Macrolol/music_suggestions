@@ -25,23 +25,31 @@ def wants_suggestions(limit):
 
 @app.route('/api/login', methods=['POST'])
 def login():
-    data = request.get_json()
-    print(data) # debug
-    print("login attempt: {}, {}".format(data['email_address'] , data['password']))
-    user = Suggester.try_login(data['email_address'], data['password'])
-    print(user) # debug 
-    if not user:  
-        return { 'error' : 'Invalid login credentials'}, 401
-    return jsonify(user), 200
+    try:
+        data = request.get_json()
+        print(data) # debug
+        print("login attempt: {}, {}".format(data['email_address'] , data['password']))
+        user = Suggester.try_login(data['email_address'], data['password'])
+        print(user) # debug 
+        if not user:  
+            return { 'error' : 'Invalid login credentials'}, 401
+        return jsonify(user), 200
+    except Exception as e:
+        print(e) # debug
+        return { 'error' : 'Unexpected Server Error'}, 500
 
 
 @app.route('/api/register', methods=['POST'])
 def register():
-    data = request.get_json()
-    print(data) # debug
-    print("register attempt: {}, {}".format(data['email_address'] , data['password'], data['username']))
-    id = Suggester.try_register(data['email_address'], data['password'], data['username'])
-    print( id ) # debug
-    if not id:
-        return { 'message' : 'Invalid login credentials'}, 401
-    return jsonify(id), 200
+    try:
+        data = request.get_json()
+        print(data) # debug
+        print("register attempt: {}, {}".format(data['email_address'] , data['password'], data['username']))
+        id = Suggester.try_register(data['email_address'], data['password'], data['username'])
+        print( id ) # debug
+        if not id:
+            return { 'message' : 'A user with that email already exists'}, 409
+        return jsonify(id), 200
+    except Exception as e:
+        print(e) # debug
+        return { 'error' : 'Unexpected Server Error'}, 500

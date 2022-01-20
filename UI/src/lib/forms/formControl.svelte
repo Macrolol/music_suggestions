@@ -1,14 +1,10 @@
 <script>
 
 export let props;
-
-
-
 export let value = '';
-
-let inputValue = '';
-
-$: value = inputValue;
+const onInput = (e) => {
+  value = e.target.value; 
+};
 
 </script>
 
@@ -21,6 +17,8 @@ $: value = inputValue;
 </style>
 
 <div class=input-group>
-<label for={props.id}>{props.label}</label>
-	<input {...props} bind:value={inputValue}/> 
+    {#if props.label}
+        <label for={props.id}>{props.label}</label>
+    {/if}
+    <input {...props} {value} on:input={onInput}/> 
 </div>

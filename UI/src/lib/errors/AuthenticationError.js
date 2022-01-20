@@ -5,11 +5,6 @@ export class AuthenticationError extends Error{
         super(...params);
         this.name = 'AuthenticationError';
 
-        // Maintains proper stack trace for where our error was thrown (only available on V8)
-        if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, CustomError)
-        }
-
     }
 }
 

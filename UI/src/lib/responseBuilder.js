@@ -47,7 +47,7 @@ const buildResponse = ({status, body, options}) => {
                 options.removeCookies.map(
                     cookieToRemove => {
                         value = cookie.serialize(cookieToRemove, '', removeCookieOptions)
-                        console.debug(`Removing cookie: ${value}`);
+                        //console.debug(`Removing cookie: ${value}`); // debug
                         return value; 
                     }
                 )
@@ -58,7 +58,7 @@ const buildResponse = ({status, body, options}) => {
             headers['Set-Cookie'].push(cookie.serialize(options.removeCookie, '', removeCookieOptions));
         }
     }
-    console.debug(headers['Set-Cookie']);
+    //console.debug(headers['Set-Cookie']); //debug
     return {
         status,
         headers,
