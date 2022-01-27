@@ -4,7 +4,7 @@
 
 
 </script>
-<nav>
+<nav id=mainNav>
     <a sveltekit:prefetch href="/">Home</a>
     <a sveltekit:prefetch href="/about">About</a>
     <a sveltekit:prefetch href="/suggest">Suggest</a>

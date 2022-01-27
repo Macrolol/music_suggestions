@@ -91,6 +91,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Login</title>
+</svelte:head>
+
 <h3>
 		Login
 </h3>
